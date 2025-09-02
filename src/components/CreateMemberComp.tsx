@@ -14,6 +14,7 @@ import { createMemberValidatorSchema } from "../validation/createMemberValidator
 import { OneTwoThreeIcon } from "./Icons";
 import { useFormik } from "formik";
 import { FormikInputComp, FormikSelectComp } from "./FormikInputComp";
+import { LEVELS } from '../constants/const';
 
 interface Props {
   member?: FullMemberInfo;
@@ -135,20 +136,7 @@ const CreateMemberComp: React.FC<Props> = ({ member }) => {
             />
             <FormikSelectComp
               label="Nivel"
-              options={[
-                { label: "Sin seleccionar nivel", value: 0 },
-                { label: "1", value: 1 },
-                { label: "1-B", value: 2 },
-                { label: "2", value: 3 },
-                { label: "3", value: 4 },
-                { label: "4", value: 5 },
-                { label: "5", value: 6 },
-                { label: "6", value: 7 },
-                { label: "7", value: 8 },
-                { label: "8", value: 9 },
-                { label: "9", value: 10 },
-                { label: "10", value: 11 },
-              ]}
+              options={LEVELS}
               controlId="MemberLevelId"
               icon={<Tag />}
               errors={errors.id_level}
