@@ -4,7 +4,7 @@ import useUsers from "../hooks/useUsers";
 import NavLinks from "./NavLinks";
 
 function NavbarComp() {
-  const { handleLogout, user, isLoggedIn } = useUsers();
+  const { handleLogout, user, isLoggedIn, logOutLoading } = useUsers();
 
   const logout = async () => {
     await handleLogout();
@@ -18,7 +18,7 @@ function NavbarComp() {
             <Image src="/logo_blanco.png" alt="Logo de torneos" width={50} />
           </NavLink>
           <div className="d-flex gap-3">
-            <NavLinks user={user} isLoggedIn={isLoggedIn} logout={logout} />
+            <NavLinks user={user} isLoggedIn={isLoggedIn} logout={logout} logOutLoading={logOutLoading} />
           </div>
         </Nav>
       </Container>

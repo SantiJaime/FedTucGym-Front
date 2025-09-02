@@ -18,6 +18,7 @@ const useUsers = () => {
   const { user, setUser, isLoggedIn } = useUserContext();
 
   const [loading, setLoading] = useState(false);
+  const [logOutLoading, setLogOutLoading] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
 
   const handleLogin = async (
@@ -103,12 +104,15 @@ const useUsers = () => {
 
   const handleLogout = useCallback(async () => {
     try {
+      setLogOutLoading(true);
       await logout();
       setUser(null);
       navigate("/");
     } catch (err) {
       toast.error("Error al cerrar sesión");
       console.error(err);
+    } finally {
+      setLogOutLoading(false);
     }
   }, [setUser, navigate]);
 
@@ -123,6 +127,7 @@ const useUsers = () => {
     fetchOneUser,
     handleCreateUser,
     handleDeleteUser,
+    logOutLoading
   };
 };
 
