@@ -1,4 +1,16 @@
-type Level = "1" | "1-B" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
+type Level =
+  | "Escuelita"
+  | "1-B"
+  | "1-A"
+  | "2"
+  | "3"
+  | "4"
+  | "5"
+  | "6"
+  | "7"
+  | "8"
+  | "9"
+  | "10";
 type Category =
   | "Pre mini"
   | "Mini"
@@ -9,17 +21,18 @@ type Category =
 
 export const parseMember = (member: MemberInfoWithIDs, user: UserInfo) => {
   const levelMap: Record<number, Level> = {
-    1: "1",
+    1: "Escuelita",
     2: "1-B",
-    3: "2",
-    4: "3",
-    5: "4",
-    6: "5",
-    7: "6",
-    8: "7",
-    9: "8",
-    10: "9",
-    11: "10",
+    3: "1-A",
+    4: "2",
+    5: "3",
+    6: "4",
+    7: "5",
+    8: "6",
+    9: "7",
+    10: "8",
+    11: "9",
+    12: "10",
   };
 
   const categoryMap: Record<number, Category> = {
