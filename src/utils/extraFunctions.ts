@@ -1,3 +1,5 @@
+import { CATEGORIES, LEVELS } from "../constants/const";
+
 type Level =
   | "Escuelita"
   | "1-B"
@@ -20,33 +22,16 @@ type Category =
   | "Mayores";
 
 export const parseMember = (member: MemberInfoWithIDs, user: UserInfo) => {
-  const levelMap: Record<number, Level> = {
-    1: "Escuelita",
-    2: "1-B",
-    3: "1-A",
-    4: "2",
-    5: "3",
-    6: "4",
-    7: "5",
-    8: "6",
-    9: "7",
-    10: "8",
-    11: "9",
-    12: "10",
-  };
+  const levelMap = Object.fromEntries(
+    LEVELS.filter((l) => l.value !== 0).map((l) => [l.value, l.label])
+  ) as Record<number, Level>;
 
-  const categoryMap: Record<number, Category> = {
-    1: "Pre mini",
-    2: "Mini",
-    3: "Pre infantil",
-    4: "Infantil",
-    5: "Juvenil",
-    6: "Mayores",
-  };
-
-  const levelName: Level = levelMap[member.id_level] ?? "Desconocido";
-  const categoryName: Category =
-    categoryMap[member.id_category] ?? "Desconocida";
+  const categoryMap = Object.fromEntries(
+    CATEGORIES.filter((c) => c.value !== 0).map((c) => [c.value, c.label])
+  ) as Record<number, Category>;
+  
+  const levelName: Level = levelMap[member.id_level];
+  const categoryName: Category = categoryMap[member.id_category];
   const gymName = user.full_name;
 
   const parsedMember: FullMemberInfo = {
