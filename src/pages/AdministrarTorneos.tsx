@@ -1,11 +1,11 @@
-import { Container } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import CreateTournamentComp from "../components/CreateTournamentComp";
 import useTournaments from "../hooks/useTournaments";
 import { TournamentsTableComp } from "../components/TableComp";
 import Swal from "sweetalert2";
 
 const AdministrarTorneos = () => {
-  const { tournaments, handleDeleteTournament } = useTournaments();
+  const { tournaments, handleDeleteTournament, loading } = useTournaments();
 
   const deleteTournament = (id: number) => {
     Swal.fire({
@@ -30,9 +30,17 @@ const AdministrarTorneos = () => {
         <h2>Administrar torneos</h2>
         <CreateTournamentComp />
       </div>
-      <p>Aquí se mostrarán todos los torneos próximos y los nuevos que se vayan creando</p>
+      <p>
+        Aquí se mostrarán todos los torneos próximos y los nuevos que se vayan
+        creando
+      </p>
       <hr />
-      {!tournaments || tournaments.length === 0 ? (
+      {loading ? (
+        <div className="d-flex justify-content-center gap-2">
+          <Spinner animation="border" variant="dark"/>
+          <h4>Cargando...</h4>
+        </div>
+      ) : !tournaments || tournaments.length === 0 ? (
         <h3>No existen torneos próximos</h3>
       ) : (
         <TournamentsTableComp
