@@ -1,14 +1,15 @@
 import React from "react";
-import { Button } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 
 interface Props {
   user: UserInfo | null;
   logout: () => Promise<void>;
   isLoggedIn: boolean;
+  logOutLoading: boolean;
 }
 
-const NavLinks: React.FC<Props> = ({ user, logout, isLoggedIn }) => {
+const NavLinks: React.FC<Props> = ({ user, logout, isLoggedIn, logOutLoading }) => {
   const LOGGED_USER_NAVS = [
     {
       to: "/inicio",
@@ -27,6 +28,12 @@ const NavLinks: React.FC<Props> = ({ user, logout, isLoggedIn }) => {
       </NavLink>
     );
   }
+  const spinner = (
+    <div className="d-flex align-items-center gap-2">
+      <Spinner animation="border" variant="light" size="sm" />
+      <span>Cerrando sesión...</span>
+    </div>
+  )
   return (
     <>
       {isLoggedIn && user.userId > 0 ? (
@@ -40,8 +47,8 @@ const NavLinks: React.FC<Props> = ({ user, logout, isLoggedIn }) => {
               {nav.text}
             </NavLink>
           ))}
-          <Button onClick={logout} variant="outline-light">
-            Cerrar sesión
+          <Button onClick={logout} variant="outline-light" disabled={logOutLoading}>
+            {logOutLoading ? spinner : "Cerrar sesión"}
           </Button>
         </>
       ) : (
