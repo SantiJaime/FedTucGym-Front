@@ -18,13 +18,14 @@ const CreateTournamentComp = () => {
       name: "",
       startDate: "",
       endDate: "",
+      inscription_date_end: ""
     },
     validationSchema: createTournamentValidatorSchema,
     onSubmit: async (values) => {
-      const areDatesValid = validateDates(values.startDate, values.endDate);
+      const areDatesValid = validateDates(values.startDate, values.endDate, values.inscription_date_end);
       if (!areDatesValid) {
         toast.error(
-          "La fecha de finalización debe ser igual o posterior a la fecha de inicio"
+          "La fecha de finalización debe ser igual o posterior a la fecha de inicio y el último día de inscripción menor al inicio"
         );
         return;
       }
@@ -112,6 +113,25 @@ const CreateTournamentComp = () => {
               }}
               errors={errors.endDate}
               name="endDate"
+            />
+            <FormikInputComp
+              controlId="InscriptionEndDateId"
+              label="Último día para inscribirse"
+              placeholder="YYYY-MM-DD"
+              icon={<Calendar2Date />}
+              value={values.inscription_date_end}
+              onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
+                let value = ev.target.value.replace(/[^0-9]/g, "");
+
+                if (value.length > 4)
+                  value = `${value.slice(0, 4)}-${value.slice(4)}`;
+                if (value.length > 7)
+                  value = `${value.slice(0, 7)}-${value.slice(7, 9)}`;
+
+                setFieldValue("inscription_date_end", value);
+              }}
+              errors={errors.inscription_date_end}
+              name="inscription_date_end"
             />
             <Button variant="dark" type="submit" className="w-100">
               Crear torneo

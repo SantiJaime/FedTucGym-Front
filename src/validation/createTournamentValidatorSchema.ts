@@ -15,24 +15,12 @@ const dateValidator = yup
       date.getDate() === day
     );
   })
-  .test(
-    "min-15-days",
-    "Debe tener mas de 15 dias de anticipación",
-    (value) => {
-      if (!value) return false;
-
-      const inputDate = new Date(value);
-      const today = new Date();
-
-      inputDate.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
-
-      const minDate = new Date(today);
-      minDate.setDate(today.getDate() + 15);
-
-      return inputDate >= minDate;
-    }
-  );
+  .test("no-past", "La fecha no puede ser pasada", (value) => {
+    if (!value) return false;
+    const inputDate = new Date(value);
+    const today = new Date();
+    return inputDate >= today;
+  });
 
 export const createTournamentValidatorSchema = yup.object().shape({
   name: yup
@@ -41,4 +29,5 @@ export const createTournamentValidatorSchema = yup.object().shape({
     .min(3, "El nombre del torneo debe tener al menos 3 caracteres"),
   startDate: dateValidator,
   endDate: dateValidator,
+  inscription_date_end: dateValidator,
 });
