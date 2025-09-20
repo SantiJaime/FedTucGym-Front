@@ -36,6 +36,7 @@ const CreateMemberComp: React.FC<Props> = ({ member }) => {
     },
     validationSchema: createMemberValidatorSchema,
     onSubmit: async (values) => {
+      console.log(values);
       if (member) {
         const res = await handleUpdateMember(member.id, values);
         if (res?.member) {

@@ -14,6 +14,7 @@ type Level =
   | "9"
   | "10";
 type Category =
+  | "Pulgas"
   | "Pre mini"
   | "Mini"
   | "Pre infantil"
@@ -29,7 +30,7 @@ export const parseMember = (member: MemberInfoWithIDs, user: UserInfo) => {
   const categoryMap = Object.fromEntries(
     CATEGORIES.filter((c) => c.value !== 0).map((c) => [c.value, c.label])
   ) as Record<number, Category>;
-  
+
   const levelName: Level = levelMap[member.id_level];
   const categoryName: Category = categoryMap[member.id_category];
   const gymName = user.full_name;
