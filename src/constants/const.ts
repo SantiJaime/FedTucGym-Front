@@ -1,5 +1,6 @@
 export const CATEGORIES = [
   { value: 0, label: "Sin seleccionar categoría" },
+  { value: 7, label: "Pulgas" },
   { value: 1, label: "Pre mini" },
   { value: 2, label: "Mini" },
   { value: 3, label: "Pre infantil" },
