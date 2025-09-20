@@ -24,14 +24,14 @@ const dateValidator = yup
   })
   .test(
     "not-too-young",
-    "El alumno debe tener al menos 4 años",
+    "El alumno debe tener al menos 2 años",
     (value) => {
       if (!value) return false;
       const inputDate = new Date(value);
 
-      const fourYearsAgo = new Date();
-      fourYearsAgo.setFullYear(fourYearsAgo.getFullYear() - 4);
-      return inputDate <= fourYearsAgo;
+      const twoYearsAgo = new Date();
+      twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+      return inputDate <= twoYearsAgo;
     }
   )
   .required("La fecha es requerida");
