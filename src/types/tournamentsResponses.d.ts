@@ -8,6 +8,7 @@ interface CreateTournament {
   name: string;
   startDate: string;
   endDate: string;
+  inscription_date_end: string;
 }
 interface GetTournamentsResponse {
   message: string;
