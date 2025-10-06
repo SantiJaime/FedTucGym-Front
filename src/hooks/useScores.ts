@@ -1,5 +1,4 @@
 import { toast } from "sonner";
-import useScoresContext from "./useScoresContext";
 import useUsers from "./useUsers";
 import {
   getScoresByLevelAndCategory,
@@ -11,8 +10,6 @@ import { createScore } from "../helpers/scoresQueries";
 import useTournaments from "./useTournaments";
 
 const useScores = () => {
-  const { scores, setScores, scoresPagination, setScoresPagination } =
-    useScoresContext();
   const { setMembersTournaments } = useTournaments();
   const { user, handleLogout } = useUsers();
   const [loading, setLoading] = useState(false);
@@ -43,8 +40,7 @@ const useScores = () => {
     try {
       setLoading(true);
       const res = await getScoresByLevelAndCategory(data, page);
-      setScores(res.scores);
-      setScoresPagination(res.pagination);
+      return res;
     } catch (error) {
       const err = error as ErrorResponse;
       toast.error(err.error);
@@ -70,8 +66,7 @@ const useScores = () => {
         },
         page
       );
-      setScores(res.scores);
-      setScoresPagination(res.pagination);
+      return res;
     } catch (error) {
       const err = error as ErrorResponse;
       toast.error(err.error);
@@ -114,13 +109,10 @@ const useScores = () => {
   };
 
   return {
-    scores,
     handleGetScoresByCategoryAndLevel,
     handleGetScoresByGym,
     handleCreateScore,
     loading,
-    scoresPagination,
-    setScoresPagination,
     handleRedirect,
   };
 };
