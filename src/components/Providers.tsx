@@ -2,7 +2,6 @@ import { type ReactNode } from "react";
 import MembersProvider from "../context/members/MembersProvider";
 import TournamentsProvider from "../context/tournaments/TournamentsProvider";
 import MembersTournamentsProvider from "../context/members_tournaments/MembersTournamentsProvider";
-import ScoresProvider from "../context/scores/ScoresProvider";
 import UserProvider from "../context/user/UserProvider";
 import GymsProvider from "../context/gyms/GymsProvider";
 
@@ -17,7 +16,7 @@ const Providers: React.FC<Props> = ({ children }) => {
         <MembersProvider>
           <TournamentsProvider>
             <MembersTournamentsProvider>
-              <ScoresProvider>{children}</ScoresProvider>
+              {children}
             </MembersTournamentsProvider>
           </TournamentsProvider>
         </MembersProvider>
