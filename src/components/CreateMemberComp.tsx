@@ -114,8 +114,9 @@ const CreateMemberComp: React.FC<Props> = ({ member }) => {
               icon={<CalendarDate />}
               value={values.birth_date}
               name="birth_date"
+              errors={errors.birth_date}
               onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
-                let value = ev.target.value.replace(/[^0-9]/g, "");
+                let value = ev.target.value.replace (/[^0-9]/g, "");
 
                 if (value.length > 4)
                   value = `${value.slice(0, 4)}-${value.slice(4)}`;
