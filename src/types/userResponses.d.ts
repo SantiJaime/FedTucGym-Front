@@ -14,6 +14,15 @@ interface LoginResponse {
   message: string;
   userInfo: UserInfo;
 }
+interface MeResponse {
+  user: {
+    id: number;
+    full_name: string;
+    role: string;
+    category: string;
+    id_category: 1 | 2 | 3;
+  };
+}
 interface GetAllUsersResponse {
   message: string;
   users: User[];

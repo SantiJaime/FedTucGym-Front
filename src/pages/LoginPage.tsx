@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Container, Image } from "react-bootstrap";
+import { Container, Image, Spinner } from "react-bootstrap";
 import { loginValidatorSchema, type LoginFormData } from "../validation/loginValidatorSchema";
 import { useForm } from "react-hook-form";
 import { LoginFormComp } from "../components/FormComp";
@@ -10,13 +10,13 @@ import { useEffect } from "react";
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const { handleLogin, loading, user } = useUsers();
+  const { handleLogin, loading, user, isInitializing } = useUsers();
 
   useEffect(() => {
-    if (user) {
+    if (!isInitializing && user) {
       navigate("/inicio");
     }
-  }, [user, navigate]);
+  }, [user, navigate, isInitializing]);
 
   const {
     register,
@@ -30,11 +30,17 @@ const LoginPage = () => {
   const onSubmit = async (data: LoginFormData) => {
     const res = await handleLogin(data);
     if (res?.userInfo) {
-      localStorage.setItem("userInfo", JSON.stringify(res.userInfo));
-
       navigate("/inicio");
     }
   };
+
+  if (isInitializing) {
+    return (
+      <Container className="my-5 d-flex justify-content-center">
+        <Spinner animation="border" />
+      </Container>
+    );
+  }
 
   return (
     <Container className="my-5 d-flex justify-content-center flex-column align-items-center">

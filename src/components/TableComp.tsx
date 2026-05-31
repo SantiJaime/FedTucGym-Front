@@ -1,5 +1,5 @@
 import { Button, Table } from "react-bootstrap";
-import { CashCoin, ClipboardPlusFill, Trash3Fill } from "react-bootstrap-icons";
+import { ClipboardPlusFill, Trash3Fill } from "react-bootstrap-icons";
 import CreateMemberComp from "./CreateMemberComp";
 import CreateScoreModalComp from "./CreateScoreModalComp";
 
@@ -20,12 +20,10 @@ interface TournamentsProps {
 interface MembersTournamentsProps {
   membersTournaments: MembersTournaments[];
   headers: string[];
-  onClickPaid?: (
+  onClickDelete?: (
     id_member: number,
     id_tournament: number,
-    paid: boolean
   ) => void;
-  showPaidColumn?: boolean;
   location: "scores" | "membersTournaments";
 }
 
@@ -189,8 +187,7 @@ export const TournamentsTableComp: React.FC<TournamentsProps> = ({
 export const MembersTournamentsTableComp: React.FC<MembersTournamentsProps> = ({
   headers,
   membersTournaments,
-  onClickPaid,
-  showPaidColumn = true,
+  onClickDelete,
   location,
 }) => {
   return (
@@ -208,22 +205,19 @@ export const MembersTournamentsTableComp: React.FC<MembersTournamentsProps> = ({
             <td>{mt.dni}</td>
             <td>{mt.full_name}</td>
             <td>{mt.gym}</td>
-            {showPaidColumn && (
-              <td className="text-center">{mt.paid ? "Si" : "No"}</td>
-            )}
             <td>
               <div className="d-flex justify-content-center">
-                {location === "membersTournaments" && onClickPaid ? (
+                {location === "membersTournaments" && onClickDelete ? (
                   <Button
-                    variant={mt.paid ? "danger" : "success"}
+                    variant="danger"
                     className="d-flex align-items-center gap-1"
                     onClick={() =>
-                      onClickPaid(mt.id_member, mt.id_tournament, !mt.paid)
+                      onClickDelete(mt.id_member, mt.id_tournament)
                     }
                   >
-                    <CashCoin />
+                    <Trash3Fill />
                     <span>
-                      {mt.paid ? "Marcar como NO pagado" : "Marcar como pagado"}
+                      Eliminar
                     </span>
                   </Button>
                 ) : (
