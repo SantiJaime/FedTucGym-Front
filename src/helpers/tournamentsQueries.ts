@@ -166,22 +166,20 @@ export const getMembersNotInTournament = async (
   return res;
 };
 
-export const updatePayMemberTournament = async ({
-  paid,
+export const deleteMemberFromTournament = async ({
   id_tournament,
   id_member,
-}: UpdatePayMemberTournamentData): Promise<{ message: string }> => {
+}: DeleteMemberFromTournamentData): Promise<{ message: string }> => {
   const response = await fetch(`${URL}/${id_tournament}/member/${id_member}`, {
-    method: "PATCH",
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ paid }),
     credentials: "include",
   });
   if (response.status === 401) {
     await refreshAccessToken();
-    return updatePayMemberTournament({ paid, id_tournament, id_member });
+    return deleteMemberFromTournament({ id_tournament, id_member });
   }
   if (!response.ok) {
     const error: ErrorResponse = await response.json();

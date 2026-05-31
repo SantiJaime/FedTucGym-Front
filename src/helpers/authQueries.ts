@@ -16,6 +16,9 @@ export const refreshAccessToken = async () => {
     throw error;
   }
 
-  await response.json();
+  const text = await response.text();
+  if (text) {
+    JSON.parse(text);
+  }
   return true;
 };

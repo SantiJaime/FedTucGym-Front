@@ -19,10 +19,9 @@ interface CreateTournamentResponse {
   message: string;
   tournament: Tournament;
 }
-interface UpdatePayMemberTournamentData {
+interface DeleteMemberFromTournamentData {
   id_member: number;
   id_tournament: number;
-  paid: boolean;
 }
 interface TournamentsPaginationInfo {
   hasMore: boolean;

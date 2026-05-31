@@ -15,7 +15,7 @@ import type { RegisterFormData } from "../validation/registerValidatorSchema";
 
 const useUsers = () => {
   const navigate = useNavigate();
-  const { user, setUser, isLoggedIn } = useUserContext();
+  const { user, setUser, isLoggedIn, isInitializing } = useUserContext();
 
   const [loading, setLoading] = useState(false);
   const [logOutLoading, setLogOutLoading] = useState(false);
@@ -121,6 +121,7 @@ const useUsers = () => {
     users,
     user,
     isLoggedIn,
+    isInitializing,
     handleLogin,
     handleLogout,
     fetchUsers,

@@ -12,6 +12,7 @@ import SelectTournamentComp from "../components/SelectTournamentComp";
 import FilterScoresComp from "../components/FilterScoresComp";
 import type { FilterScores } from "../validation/filterScoresValidatorSchema";
 import PaginationComp from "../components/PaginationComp";
+import Swal from "sweetalert2";
 
 export default function InscripcionTorneos() {
   const { user } = useUsers();
@@ -23,7 +24,7 @@ export default function InscripcionTorneos() {
     setSelectedTournament,
     membersTournaments,
     membersNotInTournament,
-    handleUpdatePayMemberTournament,
+    handleDeleteMemberFromTournament,
     handleGetMembersTournamentsByGym,
     membersTournamentsPagination,
     membersNotInTournamentsPagination,
@@ -36,12 +37,24 @@ export default function InscripcionTorneos() {
 
   const condition = selectedTournament !== 0 && loadingFilter === false;
 
-  const handlePaid = async (
+  const handleDelete = async (
     id_member: number,
     id_tournament: number,
-    paid: boolean
   ) => {
-    await handleUpdatePayMemberTournament({ paid, id_tournament, id_member });
+    Swal.fire({
+      title: "¿Está seguro de eliminar este alumno del torneo?",
+      text: "En caso de arrepentimiento, luego puede volver a inscribirlo",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#16b800",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await handleDeleteMemberFromTournament({ id_tournament, id_member });
+      }
+    });
   };
 
   const registerToTournament = async (member: FullMemberInfo) => {
@@ -117,10 +130,21 @@ export default function InscripcionTorneos() {
                 <Spinner animation="border" variant="dark" />
                 <h4 className="text-white">Cargando...</h4>
               </div>
-            ) : !membersTournaments || membersTournaments.length === 0 ? (
+            ) : !membersTournaments ||
+              (membersTournaments.length === 0 &&
+                membersTournamentsPagination &&
+                membersTournamentsPagination.total === 0) ? (
               <h4 className="text-center mt-3">
                 No hay alumnos registrados en este torneo
               </h4>
+            ) : membersTournaments.length === 0 &&
+              membersTournamentsPagination &&
+              membersTournamentsPagination.total > 0 ? (
+              <PaginationComp
+                pagination={membersTournamentsPagination}
+                handlePageChange={handlePageChangeMT}
+                setActualPage={setActualPage}
+              />
             ) : (
               <>
                 <MembersTournamentsTableComp
@@ -128,12 +152,11 @@ export default function InscripcionTorneos() {
                     "DNI del alumno",
                     "Nombre y apellido del alumno",
                     "Gimnasio",
-                    "Pagado",
                     "Acciones",
                   ]}
                   location="membersTournaments"
                   membersTournaments={membersTournaments}
-                  onClickPaid={handlePaid}
+                  onClickDelete={handleDelete}
                 />
                 {membersTournamentsPagination && (
                   <PaginationComp

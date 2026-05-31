@@ -14,7 +14,6 @@ const RoutesView = () => {
   return (
     <Routes>
       <Route path="/" element={<LoginPage />} />
-      <Route path="*" element={<h1>404</h1>} />
       <Route
         path="/crear-usuario"
         element={
@@ -31,7 +30,14 @@ const RoutesView = () => {
           </PrivateRoutes>
         }
       />
-      <Route path="/inicio" element={<HomePage />} />
+      <Route
+        path="/inicio"
+        element={
+          <PrivateRoutes role={["Administrador", "Gimnasio", "Juez"]}>
+            <HomePage />
+          </PrivateRoutes>
+        }
+      />
       <Route
         path="/mi-cuenta"
         element={
@@ -72,6 +78,7 @@ const RoutesView = () => {
           </PrivateRoutes>
         }
       />
+      <Route path="*" element={<h1>404</h1>} />
     </Routes>
   );
 };

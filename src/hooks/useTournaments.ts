@@ -9,7 +9,7 @@ import {
   getMembersTournamentsByGym,
   getPastTournaments,
   getTournaments,
-  updatePayMemberTournament,
+  deleteMemberFromTournament,
 } from "../helpers/tournamentsQueries";
 import { useCallback, useEffect, useState } from "react";
 import useMembersTournamentsContext from "./useMembersTournamentsContext";
@@ -91,7 +91,7 @@ const useTournaments = () => {
 
   const handleGetMembersTournaments = async (
     dataIds: FilterScores,
-    page: number
+    page: number,
   ) => {
     try {
       setLoading(true);
@@ -100,7 +100,7 @@ const useTournaments = () => {
           ...dataIds,
           id_tournament: selectedTournament,
         },
-        page
+        page,
       );
       setMembersTournaments(resMT.membersTournaments);
       setMembersTournamentsPagination(resMT.pagination);
@@ -117,11 +117,11 @@ const useTournaments = () => {
 
   const handleGetMembersTournamentsByGym = async (
     dataIds: FilterScores,
-    page: number
+    page: number,
   ) => {
     if (!user) {
       toast.error(
-        "Debe iniciar sesión para ver los alumnos registrados a este torneo"
+        "Debe iniciar sesión para ver los alumnos registrados a este torneo",
       );
       return;
     }
@@ -133,23 +133,29 @@ const useTournaments = () => {
           id_gym: user.userId,
           id_tournament: selectedTournament,
         },
-        page
+        page,
       );
       setMembersTournaments(resMT.membersTournaments);
       setMembersTournamentsPagination(resMT.pagination);
+      if (resMT.membersTournaments.length === 0) {
+        setMembersTournaments([]);
+      }
+
       const resMNT = await getMembersNotInTournament(
         {
           ...dataIds,
           id_gym: user.userId,
           id_tournament: selectedTournament,
         },
-        page
+        page,
       );
       setMembersNotInTournament(resMNT.members);
       setMembersNotInTournamentsPagination(resMNT.pagination);
     } catch (err) {
       const error = err as ErrorResponse;
       toast.error(error.error);
+      setMembersTournaments([]);
+      setMembersNotInTournament([]);
       if (error.redirect) {
         await handleLogout();
       }
@@ -167,7 +173,7 @@ const useTournaments = () => {
   const handleCreateTournament = async (tournament: CreateTournament) => {
     if (!user || user.role !== "Administrador") {
       toast.error(
-        "Debe iniciar sesión y ser Administrador para crear un torneo"
+        "Debe iniciar sesión y ser Administrador para crear un torneo",
       );
       return;
     }
@@ -190,7 +196,7 @@ const useTournaments = () => {
     try {
       const res = await deleteTournament(id);
       setTournaments((prevState) =>
-        (prevState ?? []).filter((t) => t.id !== id)
+        (prevState ?? []).filter((t) => t.id !== id),
       );
       toast.success(res.message);
     } catch (err) {
@@ -202,19 +208,89 @@ const useTournaments = () => {
     }
   };
 
-  const handleUpdatePayMemberTournament = async (
-    data: UpdatePayMemberTournamentData
+  const handleDeleteMemberFromTournament = async (
+    data: DeleteMemberFromTournamentData,
   ) => {
     try {
-      const res = await updatePayMemberTournament(data);
-      setMembersTournaments((prevState) =>
-        (prevState ?? []).map((mt) =>
-          mt.id_member === data.id_member &&
-          mt.id_tournament === data.id_tournament
-            ? { ...mt, paid: data.paid }
-            : mt
-        )
-      );
+      const res = await deleteMemberFromTournament(data);
+
+      let memberToAdd: FullMemberInfo | undefined;
+
+      setMembersTournaments((prevState) => {
+        const current = prevState ?? [];
+        const removed = current.find(
+          (mt) =>
+            mt.id_member === data.id_member &&
+            mt.id_tournament === data.id_tournament,
+        );
+        if (removed) {
+          memberToAdd = {
+            id: removed.id_member,
+            full_name: removed.full_name,
+            dni: removed.dni,
+            gym: removed.gym,
+            birth_date: "",
+            age: 0,
+            category: "",
+            level: "",
+          };
+        }
+        return current.filter(
+          (mt) =>
+            !(
+              mt.id_member === data.id_member &&
+              mt.id_tournament === data.id_tournament
+            ),
+        );
+      });
+
+      if (memberToAdd) {
+        setMembersNotInTournament((prevState) => {
+          const list = prevState ?? [];
+          if (list.some((m) => m.id === memberToAdd!.id)) return list;
+          return [...list, memberToAdd!];
+        });
+
+        setMembersNotInTournamentsPagination((prevState) => {
+          if (!prevState) {
+            return {
+              total: 1,
+              totalPages: 1,
+              page: 1,
+              perPage: 20,
+            };
+          }
+          const condition =
+            membersNotInTournament &&
+            (membersNotInTournament.length === 0 ||
+              membersNotInTournament.length === 20);
+          return {
+            ...prevState,
+            total: prevState.total + 1,
+            totalPages: condition
+              ? prevState.totalPages + 1
+              : prevState.totalPages,
+          };
+        });
+
+        setMembersTournamentsPagination((prevState) => {
+          if (!prevState) return null;
+          if (
+            membersTournaments &&
+            membersTournaments.length === 1 &&
+            prevState.totalPages === 1 &&
+            prevState.total === 1
+          ) {
+            return null;
+          }
+          return {
+            ...prevState,
+            total: prevState.total - 1,
+            totalPages:
+              prevState.totalPages === 1 ? 1 : prevState.totalPages - 1,
+          };
+        });
+      }
 
       toast.success(res.message);
     } catch (err) {
@@ -233,7 +309,7 @@ const useTournaments = () => {
     handleDeleteTournament,
     handleGetMembersTournaments,
     handleGetMembersTournamentsByGym,
-    handleUpdatePayMemberTournament,
+    handleDeleteMemberFromTournament,
     membersTournaments,
     membersNotInTournament,
     loading,
@@ -246,7 +322,7 @@ const useTournaments = () => {
     setMembersNotInTournamentsPagination,
     nextTournament,
     paginationInfo,
-    handleLoadMoreTournaments
+    handleLoadMoreTournaments,
   };
 };
 

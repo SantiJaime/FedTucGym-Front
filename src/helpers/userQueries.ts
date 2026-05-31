@@ -5,6 +5,20 @@ import { refreshAccessToken } from "./authQueries";
 
 const URL = `${env.URL_BACK_DEPLOY}/users`;
 
+const toUserInfo = (
+  raw: MeResponse["user"] | UserInfo
+): UserInfo | null => {
+  const userId = "userId" in raw ? raw.userId : raw.id;
+  if (!userId || !raw.full_name || !raw.role) return null;
+  return {
+    userId: Number(userId),
+    role: raw.role as UserRole,
+    full_name: raw.full_name,
+    category: raw.category ?? "",
+    id_category: (raw.id_category ?? 1) as 1 | 2 | 3,
+  };
+};
+
 export const login = async (data: LoginFormData) => {
   const response = await fetch(`${URL}/login`, {
     method: "POST",
@@ -20,6 +34,31 @@ export const login = async (data: LoginFormData) => {
   }
   const res: LoginResponse = await response.json();
   return res;
+};
+
+export const getMe = async (retry = true): Promise<UserInfo | null> => {
+  const response = await fetch(`${URL}/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+  if ((response.status === 401 || response.status === 403) && retry) {
+    try {
+      await refreshAccessToken();
+      return getMe(false);
+    } catch {
+      return null;
+    }
+  }
+  if (!response.ok) {
+    return null;
+  }
+  const res: MeResponse & { userInfo?: UserInfo } = await response.json();
+  const raw = res.userInfo ?? res.user;
+  if (!raw) return null;
+  return toUserInfo(raw);
 };
 
 export const getUsers = async (): Promise<GetAllUsersResponse> => {
